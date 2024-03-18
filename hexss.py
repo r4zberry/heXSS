@@ -76,17 +76,12 @@ def app():
         response = requests.get(args.domain)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
-            # parameters = soup.find_all("/.?")
-            # endpoints = soup.find_all("href=[a-zA-Z]") + soup.findAll("action=[a-z]")
             print( Fore.YELLOW + 'Endpoints in form data:')
             for endpoint in soup.findAll('form'):
                 print(Fore.GREEN + endpoint.get('action'))
             print(Fore.YELLOW +'Parameters in webpage:')
             for parameter in soup.findAll('a'):
-                print(Fore.GREEN +  parameter.get('href'))
-            # parameters = soup.findAll("/(.+?)?")
-            # endpoints = soup.findAll("href=(.+?)") + soup.findAll("action=(.+?)")
-            # print(soup + parameters + endpoints)
+
             
     if args.wordlist:
         if os.path.exists(args.wordlist):
@@ -133,16 +128,7 @@ def app():
         f.write(results)
 
         
-#TO-DO: add a way to make scan results more readable 
-#could possibly just parse json 
 
-        #use python nmap to scan top 1000 ports
-        #using syn packets and return services + vulnerabilities
-
-        #takes up to 4 digit integer and appends it as port to hostname
-    
-    #     #takes string and places it in curl request 
-    #     #returns search data as response 
     if args.domain and args.output:
         path = args.output
         f = open(path , "a")
@@ -154,29 +140,7 @@ def app():
             f.write(endpoints + "\n")
         f.close()
 
-    #     #writes data to filename.txt 
-    #     #in the directory 
 
-    # if args.database:
-    #     file = Path(args.database)
-    #     # db_path = input("Choose a filename for database file: ")
-    #     # if os.exists(db_path):
-    #     with open(args.database) as database:
-    #         db_contents = database.read()
-    #         print(db_contents)
-
-
-    #     #matches os get request with user inputted path
-    #     #to find database JSON or YAML
-    # if args.hostname and args.scan:
-    #     #perform vuln scan using nmap + database
-    # if args.domain and args.scan:
-    #      #searches for dns records for ip if domain specified
-    #     #if there is none it quits and errors
-    # if args.scan and args.database:
-    #     ##matches os get request with user inputted path
-    #     #to find database JSON or YAML
-    #     #uses database file for nmap scan 
     if args.subdomain and args.wordlist:
         subdomain= ''
         for subdomain in f:
@@ -195,12 +159,7 @@ def app():
                 requests.get(url)
                 f.write(f'[*]{url}')
             except requests.ConnectionError:
-                pass
-    #     #takes domain and appends wordlist selection to the beginning with '.'
-    #if args.fuzzer:
-        
-    #     #takes the url and replaces *hexss* with wordlist selection
-    #***consider using urllib and parse instead of wfuzz to fuzz URL parameters ***
+
     if args.fuzzer and args.wordlist:
         for r in wfuzz.fuzz(url=args.fuzzer, hc=[404], payloads=[("file",dict(fn=args.wordlist))]):
             print(r)
@@ -208,25 +167,14 @@ def app():
         for r in wfuzz.fuzz(url=args.fuzzer, hc=[404], payloads=[("file",dict(fn=args.wordlist))]):
             f = open(args.output,"a")
             f.write(r)
-        # data = re.compile(r'*(.*)*')
-        # fuzz = data.finditer(args.domain)
-        # for fuzz in fuzz:
-        #     print(fuzz)
-#*ADDED*: add Wfuzz, urlparse  0.12 otw
 
-#test parameters for reflected input by importing url parse 
-#sending requests with test payload 'hexss' and parsing the
-#response for 'hexss'. if it matches, display parameter + hexss
-# to user
     if args.reflect:
         response = requests.get(args.reflect , params='hexss')
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             reflection = soup.findAll('hexss')
             print(reflection, response.text)
-            #this feature needs to be tested.
-            #try it on a vulnerable application to see if it will reflect input
-            #if it works, it will be in v0.13
+    
 
 
 
